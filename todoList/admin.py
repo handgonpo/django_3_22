@@ -11,3 +11,8 @@ class TodoListAdmin(admin.ModelAdmin):
 
     # 필터 사이드바에 나타날 필드 지정
     list_filter = ('complete', 'created_at')
+
+    '''
+    admin.site.register(): 함수 방식, 조금 더 분리됨	
+    @admin.register(): 데코레이터 방식, 좀 더 간결하고 직관적  
+    '''

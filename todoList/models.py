@@ -11,3 +11,4 @@ class TodoList(models.Model):
 
     def __str__(self):
         return self.name  
+    # admin 페이지에서 TodoList 객체를(제목) 보기 쉽게 표시하기 위해 __str__ 메서드를 정의
