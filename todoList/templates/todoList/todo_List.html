@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>나의 Todo List</title>
+
+    <!--google icons-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=note_alt" />
+    <style>
+        .material-symbols-outlined {
+          font-variation-settings:
+          'FILL' 0,
+          'wght' 600,
+          'GRAD' 0,
+          'opsz' 32
+        }
+        .icon_size{
+            font-size : 32px;
+        }
+    </style>
+
+</head>
+<body>
+    <h1><span class="material-symbols-outlined icon_size">note_alt</span>나의 Todo List</h1>
+
+    <ul>
+        {% for todo in todos %}
+            <li>
+                <strong>{{ todo.name }}</strong><br>
+                설명: {{ todo.description }}<br>
+                완료 여부: {% if todo.complete %}<span>✔️완료</span>{% else %} ❌ 미완료{% endif %}<br>
+                가산점: {{ todo.exp }}점<br>
+                완료 시간: {{ todo.completed_at|default:"-" }}<br>
+                생성 시간: {{ todo.created_at }}<br>
+                수정 시간: {{ todo.updated_at }}<br>
+                <hr>
+            </li>
+        {% empty %}
+            <li>할 일이 없습니다!</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
