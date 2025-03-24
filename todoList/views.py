@@ -9,6 +9,9 @@ from django.http import HttpResponse
 # path("<int:pk>/", TodoDetailView.as_view()), 
 # path("<str:name>/", todo_detail),  
 
+def todo_Main(request):
+    return render(request, "todoList/todo_Main.html")
+
 def todo_List(request):
     todos = TodoList.objects.all()
 

@@ -12,7 +12,8 @@
     <link rel="stylesheet" href="{% static 'todoList/css/style.css' %}">
 </head>
 <body>
-    <h1><span class="material-symbols-outlined icon_size">note_alt</span>나의 Todo List</h1>
+    <h1 class="mainCenter"><span class="material-symbols-outlined icon_size">note_alt</span>나의 Todo List</h1>
+    <p><a href = "{% url 'todo_Main' %}">Todo List 메인페이지로 이동</a></p>
     {{todos}}
     <ul>
         {% for todo in todos %}

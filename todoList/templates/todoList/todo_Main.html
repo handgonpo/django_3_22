@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <title>나의 Todo List</title>
+
+        <!--google icons-->
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=note_alt" />
+        
+        <!-- 외부 CSS 파일 -->
+        <link rel="stylesheet" href="{% static 'todoList/css/style.css' %}">
+    </head>
+
+    <body>
+        <h1 class="mainCenter">Todo List Main Page</h1>
+        <p><a href = "{% url 'todo_List' %}">Todo List 목록보기</a></p>
+    </body>
+</html>
