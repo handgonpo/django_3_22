@@ -7,10 +7,10 @@ class TodoListAdmin(admin.ModelAdmin):
     list_display = ('name', 'complete', 'exp', 'created_at', 'updated_at')
 
     # Admin 검색창에서 검색할 수 있는 필드 지정
-    #search_fields = ('name',)
+    search_fields = ('name',)
 
     # 필터 사이드바에 나타날 필드 지정
-    #list_filter = ('complete', 'created_at')
+    list_filter = ('complete', 'created_at')
 
     '''
     admin.site.register(): 함수 방식, 조금 더 분리됨	

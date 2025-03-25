@@ -39,3 +39,4 @@ def todo_detail(request, name):
         return HttpResponse("없는 페이지입니다.", status=404)
     
     return render(request, "todoList/todo_List.html", {"todos": todos, "keyword": name})
+
