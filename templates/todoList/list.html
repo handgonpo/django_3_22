@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+
+<ul>
+    {% for todo in todos %}
+        <li>
+            <strong>{{ todo.name }}</strong><br>
+            설명: {{ todo.description }}<br>
+
+            완료 여부: 
+            {% if todo.complete %}
+                <span>✔️완료</span>
+            {% else %} 
+                ❌ 미완료
+            {% endif %}<br>
+            
+            가산점: {{ todo.exp }}점<br>
+            완료 시간: {{ todo.completed_at|default:"-" }}<br>
+            생성 시간: {{ todo.created_at }}<br>
+            수정 시간: {{ todo.updated_at }}<br>
+            <hr>
+        </li>
+    {% empty %}
+        <li>할 일이 없습니다!</li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
