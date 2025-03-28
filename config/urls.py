@@ -8,4 +8,5 @@ urlpatterns = [
     path('todoList/', include('todoList.urls')), # 127.0.0.1:8000/todoList/ -> 장고 탬플릿 기반
     path('api/', include('todoList.api_urls')), # 127.0.0.1:8000/api/ 
     # -> DRF 기반으로 todoList>api_urls.py에 정의된 모든 URL 앞에 접두어 처럼 api/를 붙여서 최종 URL을 만든다는 뜻
+    path("api/viewsets/", include("todoList.api_viewset_urls")), # 127.0.0.1:8000/api/viewsets/<int:pk>/
 ]
