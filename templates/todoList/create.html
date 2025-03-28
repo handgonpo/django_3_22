@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block content %}
+
+    <div class="container">
+        <h2 class="h2_create">Create a New Todo</h2>
+            {% csrf_token %}
+            <div>
+                <label for="name">Name:</label>
+                <input type="text" name="name" id="name">
+            </div>
+            <div>
+                <label for="description">Description:</label>
+                <textarea name="description" id="description"></textarea>
+            </div>
+            <div>
+                <label for="complete">Complete:</label>
+                <input type="checkbox" name="complete" id="complete">
+            </div>
+            <div>
+                <label for="exp">Experience Points:</label>
+                <input type="number" name="exp" id="exp" min="0">
+            </div>
+            <button type="submit" id="todoCreate">Create</button>
+    </div>
+
+
+    <script>
+        // CSRF 토큰을 쿠키에서 꺼내는 함수: 이 코드는 거의 고정으로 매번 똑같이 사용할수 있다.
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    
+        const csrftoken = getCookie('csrftoken');  // csrftoken 가져오기
+    
+        // CKEditor 활성화(사용할때마다 붙여주면 되는 똑같은 코드)
+        CKEDITOR.replace('description');
+    
+        // 버튼 클릭 시 axios로 데이터 전송
+        $("#todoCreate").on("click", function () {
+            //console.log("버튼이 클릭되었어요.");
+            
+            /*
+            id="exp"인 input 태그에서 사용자가 입력한 값을 가져와 exp라는 변수에 저장한다.
+            만약 입력 값이 빈 문자열("")이면, exp에 0을 기본값으로 설정한다.
+            */
+            let exp = $("#exp").val();
+            if (exp === "") {
+                exp = 0;
+            }
+    
+            //id="description"인 textarea에 적용된 CKEditor의 내용을 가져와서 description이라는 변수에 저장한다.
+            let description = CKEDITOR.instances['description'].getData();
+    
+            /*
+            이 코드는 axios를 사용해서 POST 방식으로 데이터를 서버에 전송하는 코드
+            전송 대상 주소는 /api/viewsets/todos/이고,
+            서버에 보낼 데이터는 다음 4개이다:
+            */
+            axios.post("/api/viewsets/todos/", {
+                name: $("#name").val(),
+                description: description,
+                complete: $("#complete").prop("checked"),
+                exp: exp
+            }, {
+                /*
+                Header	HTTP 요청에 포함되는 추가 정보(누가 보냈는지, 어떤 형식인지 등)
+                CSRFToken	Cross-Site Request Forgery 공격을 막기 위해 사용되는 보안 토큰
+                csrftoken	쿠키에서 꺼낸 CSRF 토큰 값 (예: getCookie('csrftoken')으로 가져온 값)
+                */
+                headers: {
+                    "X-CSRFToken": csrftoken //브라우저 네트워크 쿠키에서 확인
+                }
+            })
+            //성공하면 보내고 todoList로 링크이동
+            .then(function (response) {
+                window.location.href = "/todoList";
+            })
+            //실패하면 생성에 실패했다는 얼럿 띄우기
+            .catch(function (error) {
+                console.log(error);
+                alert("Todo 생성에 실패했습니다.");
+            });
+        });
+    </script>
+    
+
+{% endblock %}

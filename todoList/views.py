@@ -46,29 +46,29 @@ def todo_detail_name(request, name):
     todo = TodoList.objects.filter(name__icontains=name) # queryset
     first = todo.first()
     last =  todo.last()
-    return render(request, "todo/todo.html", {"todo": todo, "first": first, "last": last})
+    return render(request, "todoList/todo.html", {"todo": todo, "first": first, "last": last})
 
 
 class TodoCreateView(View):
 
     def get(self, request):
-        return render(request, "todo/create.html")
+        return render(request, "todoList/create.html")
     
 
 class TodoListView(LoginRequiredMixin, View):
 
     def get(self, request):
         # todos = Todo.objects.all()
-        return render(request, "todo/list2.html")
+        return render(request, "todoList/list2.html")
     
 
 class TodoDetailView(View):
 
     def get(self, request, pk):
-        return render(request, "todo/detail.html")
+        return render(request, "todoList/detail.html")
     
 
 class TodoUpdateView(View):
 
     def get(self, request, pk):
-        return render(request, "todo/update.html")
+        return render(request, "todoList/update.html")
