@@ -59,7 +59,7 @@ class TodoListView(LoginRequiredMixin, View):
 
     def get(self, request):
         # todos = Todo.objects.all()
-        return render(request, "todoList/list2.html")
+        return render(request, "todoList/list.html")
     
 
 class TodoDetailView(View):

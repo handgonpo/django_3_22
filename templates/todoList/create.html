@@ -1,34 +1,51 @@
-{% extends "base.html" %}
+{% extends "base.html" %} <!-- base.html을 기본 템플릿으로 사용 -->
 
-{% load static %}
+{% load static %} <!-- 정적 파일(static) 불러오기 위해 필요한 태그 -->
 
 {% block content %}
 
+    <!-- 전체 form 구조를 감싸는 컨테이너 -->
     <div class="container">
         <h2 class="h2_create">Create a New Todo</h2>
-            {% csrf_token %}
+            
+            {% csrf_token %} <!-- Django 보안을 위한 CSRF 토큰 (form 태그 없지만 붙여도 괜찮음) -->
+            
+            <!-- Todo 이름 입력 -->
             <div>
                 <label for="name">Name:</label>
                 <input type="text" name="name" id="name">
             </div>
+
+            <!-- 상세 설명 입력 (여기에 CKEditor 적용됨) -->
             <div>
                 <label for="description">Description:</label>
                 <textarea name="description" id="description"></textarea>
             </div>
+
+            <!-- 완료 여부 체크박스 -->
             <div>
                 <label for="complete">Complete:</label>
                 <input type="checkbox" name="complete" id="complete">
             </div>
+
+            <!-- 경험치 입력 -->
             <div>
                 <label for="exp">Experience Points:</label>
                 <input type="number" name="exp" id="exp" min="0">
             </div>
+
+            <!-- 생성 버튼 -->
             <button type="submit" id="todoCreate">Create</button>
     </div>
 
-
+    <!-- 스크립트 시작 -->
     <script>
-        // CSRF 토큰을 쿠키에서 꺼내는 함수: 이 코드는 거의 고정으로 매번 똑같이 사용할수 있다.
+        
+        /**
+         * CSRF 토큰을 쿠키에서 꺼내오는 함수
+         * Django에서는 보안을 위해 POST 요청 시 CSRF 토큰을 함께 보내야 함
+         * 이 함수는 브라우저 쿠키에서 csrftoken 값을 찾아 반환함
+        */
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -44,58 +61,58 @@
             return cookieValue;
         }
     
+        // 위 함수 호출해서 csrftoken 변수에 저장
         const csrftoken = getCookie('csrftoken');  // csrftoken 가져오기
     
-        // CKEditor 활성화(사용할때마다 붙여주면 되는 똑같은 코드)
+        // CKEditor 적용하기
+        // id="description"인 textarea를 Rich Text 에디터로 바꿔줌
         CKEDITOR.replace('description');
     
-        // 버튼 클릭 시 axios로 데이터 전송
+        /**
+         * 버튼 클릭 이벤트: 'Create' 버튼 누르면 실행됨
+         * - 사용자가 입력한 내용을 axios로 서버에 POST 전송
+        */
         $("#todoCreate").on("click", function () {
             //console.log("버튼이 클릭되었어요.");
             
-            /*
-            id="exp"인 input 태그에서 사용자가 입력한 값을 가져와 exp라는 변수에 저장한다.
-            만약 입력 값이 빈 문자열("")이면, exp에 0을 기본값으로 설정한다.
-            */
+            // exp 값이 비어 있으면 기본값 0으로 설정
             let exp = $("#exp").val();
             if (exp === "") {
                 exp = 0;
             }
     
-            //id="description"인 textarea에 적용된 CKEditor의 내용을 가져와서 description이라는 변수에 저장한다.
+            // CKEditor에서 입력한 description 내용 가져오기
             let description = CKEDITOR.instances['description'].getData();
     
-            /*
-            이 코드는 axios를 사용해서 POST 방식으로 데이터를 서버에 전송하는 코드
-            전송 대상 주소는 /api/viewsets/todos/이고,
-            서버에 보낼 데이터는 다음 4개이다:
-            */
-            axios.post("/api/viewsets/todos/", {
+            // Axios로 POST 요청 보내기
+            axiosInstance.post("/api/viewsets/todos/", {
                 name: $("#name").val(),
                 description: description,
                 complete: $("#complete").prop("checked"),
                 exp: exp
             }, {
-                /*
-                Header	HTTP 요청에 포함되는 추가 정보(누가 보냈는지, 어떤 형식인지 등)
-                CSRFToken	Cross-Site Request Forgery 공격을 막기 위해 사용되는 보안 토큰
-                csrftoken	쿠키에서 꺼낸 CSRF 토큰 값 (예: getCookie('csrftoken')으로 가져온 값)
-                */
                 headers: {
-                    "X-CSRFToken": csrftoken //브라우저 네트워크 쿠키에서 확인
+                    "X-CSRFToken": csrftoken // Django가 요구하는 CSRF 헤더 추가
                 }
             })
-            //성공하면 보내고 todoList로 링크이동
+            // 성공적으로 등록되면 todo 목록 페이지로 이동
             .then(function (response) {
-                window.location.href = "/todoList";
+                window.location.href = "/todoList/list/";
             })
-            //실패하면 생성에 실패했다는 얼럿 띄우기
+            // 실패하면 콘솔 출력 + alert 메시지 띄우기
             .catch(function (error) {
                 console.log(error);
                 alert("Todo 생성에 실패했습니다.");
             });
         });
     </script>
-    
-
+ 
+   
 {% endblock %}
+<!--  
+🎯 요약 흐름
+- 사용자가 입력 → #todoCreate 버튼 클릭
+- CKEditor와 입력값 수집
+- axios.post()로 /api/viewsets/todos/ 주소에 데이터 전송
+- 성공 시 목록 페이지로 이동, 실패 시 에러 메시지 출력
+-->

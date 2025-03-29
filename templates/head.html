@@ -17,6 +17,17 @@
     
     <!--ckeditor-->
     <script src="https://cdn.ckeditor.com/4.22.1/full/ckeditor.js"></script>
+    
+    <!--javascript-->
+    <script>
+        const axiosInstance = axios.create({
+            baseURL: "http://127.0.0.1:8000",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            withCredentials: true // 인증이 필요한 경우에 쿠키 포함
+        });
+    </script>
 
 </head>
 
