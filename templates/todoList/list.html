@@ -137,7 +137,7 @@
     
     // 완료 버튼 클릭 시 호출됨 → 완료 처리 요청
     function toComplete(pk) {
-        axiosInstance.patch(`/api/viewsets/todos/${pk}/`,
+        axiosInstance.patch(`/api/viewsets/todos/${pk}/`, //insomnia 경로
             {
                 complete: true,
             })

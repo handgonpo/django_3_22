@@ -85,7 +85,7 @@
             let description = CKEDITOR.instances['description'].getData();
     
             // Axios로 POST 요청 보내기
-            axiosInstance.post("/api/viewsets/todos/", {
+            axiosInstance.post("/api/viewsets/todos/", { //insomnia 경로
                 name: $("#name").val(),
                 description: description,
                 complete: $("#complete").prop("checked"),

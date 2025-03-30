@@ -100,11 +100,11 @@
         if (confirm("정말 해당 Todo를 삭제하시겠습니까?")){
 
             // ✅ 삭제 요청
-            axiosInstance.delete(`/api/viewsets/todos/${pk}/`)
+            axiosInstance.delete(`/api/viewsets/todos/${pk}/`) //insomnia 경로
             .then(function(response){
 
                 // 삭제 후 목록 페이지로 이동
-                window.location.href = "/todoList/";
+                window.location.href = "/todoList/list/";
             })
             .catch(function(error){
                 alert("Todo 삭제에 실패했습니다.");

@@ -1,1 +1,89 @@
-<h2>update</h2>
+{% extends "base.html" %}  <!-- base.html 템플릿을 확장 (공통 레이아웃 사용) -->
+
+{% load static %}  <!-- 정적(static) 파일을 사용하기 위해 static 템플릿 태그 불러옴 -->
+
+{% block content %}
+<div class="container todo600">
+    <h2>Update Your Todo</h2>
+
+    <!-- 🔹 Todo 이름 입력 필드 -->
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name">
+    </div>
+
+    <!-- 🔹 Todo 설명 입력 필드 (CKEditor가 적용될 textarea) -->
+    <div>
+        <label for="description">Description:</label>
+        <textarea name="description" id="description"></textarea>
+    </div>
+
+    <!-- 🔹 완료 여부 체크박스 -->
+    <div>
+        <label for="complete">Complete:</label>
+        <input type="checkbox" name="complete" id="complete">
+    </div>
+
+    <!-- 🔹 경험치 입력 필드 -->
+    <div>
+        <label for="exp">Experience Points:</label>
+        <input type="number" name="exp" id="exp" min="0">
+    </div>
+
+    <!-- 🔹 업데이트 버튼 -->
+    <button class="todoCreate todoCreate_list" type="submit" id="todoUpdate">Update</button>
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    // 📌 CKEditor 초기화: description textarea를 멋진 에디터로 바꿔줌
+    CKEDITOR.replace('description');
+
+    // 📌 페이지가 로드되었을 때 실행될 함수
+    $(document).ready(function(){
+        // ✅ 현재 페이지 URL에서 pk(글 번호)만 추출
+        let pk = window.location.href.split('/').filter(Boolean).pop();
+
+        // ✅ 백엔드 API에 요청해서 해당 pk의 Todo 데이터를 받아옴
+        axiosInstance.get(`/api/viewsets/todos/${pk}/`)
+        .then(function(response){
+            const todo = response.data;
+
+            // ✅ 받아온 데이터를 각 input 요소에 채워넣음
+            $("#name").val(todo.name);                       // 이름
+            $("#complete").prop("checked", todo.complete);   // 완료 여부
+            $("#exp").val(todo.exp);                         // 경험치
+
+            // ✅ 설명은 CKEditor 에디터 안에 넣어야 하므로 setData 사용!
+            CKEDITOR.instances['description'].setData(todo.description);
+        });
+    });
+
+    // 📌 [Update] 버튼 클릭 시 실행될 코드
+    $("#todoUpdate").on("click", function() {
+        // ✅ 다시 pk(글 번호) 추출
+        let pk = window.location.href.split('/').filter(Boolean).pop();
+
+        // ✅ CKEditor에서 입력된 설명 내용을 가져옴
+        let description = CKEDITOR.instances['description'].getData();
+
+        // ✅ 백엔드 API에 수정 요청(PATCH) 보내기
+        axiosInstance.patch(`/api/viewsets/todos/${pk}/`, {
+            name: $("#name").val(),                          // 이름
+            description: description,                        // 설명
+            complete: $("#complete").prop("checked"),        // 완료 여부
+            exp: $("#exp").val(),                            // 경험치
+        })
+        .then(function(response) {
+            // ✅ 수정 성공 시, 해당 Todo의 상세보기 페이지로 이동
+            window.location.href = `/todoList/detail/${pk}/`;
+        })
+        .catch(function(error) {
+            // ❌ 수정 실패 시 콘솔에 에러 출력 + 알림창
+            console.log(error);
+            alert("Todo 수정에 실패했습니다.");
+        });
+    });
+</script>
+{% endblock %}
