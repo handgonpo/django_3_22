@@ -1,11 +1,9 @@
 {% extends "base.html" %} <!-- base.html을 기본 템플릿으로 사용 -->
-
 {% load static %} <!-- 정적 파일(static) 불러오기 위해 필요한 태그 -->
 
 {% block content %}
-
     <!-- 전체 form 구조를 감싸는 컨테이너 -->
-    <div class="container">
+    <div class="container todo600">
         <h2 class="h2_create">Create a New Todo</h2>
             
             {% csrf_token %} <!-- Django 보안을 위한 CSRF 토큰 (form 태그 없지만 붙여도 괜찮음) -->
@@ -35,9 +33,11 @@
             </div>
 
             <!-- 생성 버튼 -->
-            <button type="submit" id="todoCreate">Create</button>
+            <button class="todoCreate" type="submit" id="todoCreate">Create</button>
     </div>
+{% endblock %}
 
+{% block extra_script %}
     <!-- 스크립트 시작 -->
     <script>
         
@@ -105,9 +105,7 @@
                 alert("Todo 생성에 실패했습니다.");
             });
         });
-    </script>
- 
-   
+    </script>  
 {% endblock %}
 <!--  
 🎯 요약 흐름

@@ -4,7 +4,7 @@ from .serializers import TodoListSerializer
 
 # ViewSet
 class TodoViewSet(viewsets.ModelViewSet):
-    queryset = TodoList.objects.all()
+    queryset = TodoList.objects.all().order_by('-id') #최신글 우선순위 정렬
     serializer_class = TodoListSerializer
 
 # CRUD 전부 자동 처리!

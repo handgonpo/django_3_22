@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% load static %} <!-- 정적 파일(static)을 HTML에서 사용할 수 있게 해주는 태그 -->
+
+{% block content %} <!-- ✅ 상세 페이지의 본문 영역 시작 -->
+<div class="todoDetail todo600">
+    
+    <!-- 🔙 뒤로가기 버튼 (Todo 목록으로 이동) -->
+    <button class="toList todoCreate" onclick="window.location.href='/todoList/list/'">뒤로가기</button>
+    
+    <div class="todoInfo"></div> <!-- ✅ 이곳에 상세 데이터가 동적으로 들어올 예정 -->
+    
+    <!-- ✏️ 수정 / 🗑 삭제 버튼 -->
+    <div class="btnList">
+        <button class="todoUpdate todoCreate" onclick="toUpdate()">수정</button>
+        <button class="todoDelete todoCreate" onclick="toDelete()">삭제</button>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block extra_script %}
+<script>
+    // 날짜 포맷 변환 함수: 날짜를 보기 좋게 바꿔주는 함수
+    // 백엔드에서 오는 ISO 형식 날짜 문자열을 사람이 읽기 쉬운 형식(예: 2025.03.29 13:00)으로 바꿔줌
+    // 예: 2025-03-24T10:00:00 → 2025.03.24 오전 10:00
+    function datetimeToString(datetimeStr) {
+        if (!datetimeStr) return "-"; // 값이 없으면 하이픈"_" 표시
+        const date = new Date(datetimeStr);
+        return date.toLocaleString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    }
+
+
+    // 127.0.0.1:8000/todoList/detail/pk/ http
+    // 127.0.0.1:8000/api/viewsets/todos/pk/ insomnia
+    $(document).ready(function(){
+        // 현재 URL에서 pk(글 번호)만 추출
+        const urlParts = window.location.pathname.split('/').filter(Boolean);
+        const pk = urlParts[urlParts.length - 1];//글번호(pk)추출
+        /*
+       예를들어 http://127.0.0.1:8000/todoList/detail/3/ 3번째글 추출
+       "/todoList/detail/3/"
+       split('/')로 / 기준으로 나눠보면?: ["", "todoList", "detail", "3", ""]
+       filter(Boolean)은? 빈 문자열("")을 제거해줍니다. ["todoList", "detail", "3"]
+       urlParts.length - 1? urlParts.length는 3, 마지막 요소의 인덱스는 0부터 시작하니 3개중 2가 되고
+       -1을 해준것을 인덱스가 0부터이기 때문
+        */
+        
+        // 상세 조회 API 요청: ✅ 백엔드 API로 해당 pk의 Todo 데이터를 가져옴
+        axiosInstance.get(`/api/viewsets/todos/${pk}/`)
+        .then(function(response){
+            const todo = response.data;
+            console.log("받아온 todo:", todo); // 받아온 데이터
+
+            // ✅ 받아온 데이터를 화면에 표시 (HTML 구성)
+            $(".todoInfo").append(`
+                <div class="todo-item">
+                    <p><strong>Name:</strong>${todo.name}</p>
+                    <p><strong>Description:</strong> </p>
+                    <div>${todo.description}</div>
+                    <p><strong>Complete:</strong> ${ todo.complete ? "완료" : "진행중" }</p>
+                    <p><strong>Completed At:</strong> ${datetimeToString(todo.completed_at)}</p>
+                    <p><strong>Experience Points:</strong> ${ todo.exp }</p>
+                </div>
+            `)
+            }
+        )
+        .catch(function(error){
+
+            // ❌ 에러 발생 시 알림을 띄우고 목록 페이지로 이동
+            console.log(error);
+            alert("해당 Todo 정보를 불러오지 못했습니다.");
+            window.location.href = "/todoList";
+            //window.location.href = "127.0.0.1:8000/todoList/detail/pk/";
+        });
+    });
+    
+    // ✏️ 수정 버튼 클릭 → 수정 페이지로 이동
+    function toUpdate(){
+        const urlParts = window.location.pathname.split('/').filter(Boolean);
+        //console.log("✅ urlParts:", urlParts);
+        
+        const pk = urlParts[urlParts.length - 1]; // 현재 글 번호
+        //console.log("✅ 추출된 pk:", pk);
+        
+        window.location.href = `/todoList/update/${pk}/`;// 수정 페이지로 이동
+    }
+
+    // 🗑 삭제 버튼 클릭 → 삭제 API 호출
+    function toDelete(){
+        const urlParts = window.location.pathname.split('/').filter(Boolean);
+        const pk = urlParts[urlParts.length - 1]; // 현재 글 번호
+
+        // 사용자 확인창
+        if (confirm("정말 해당 Todo를 삭제하시겠습니까?")){
+
+            // ✅ 삭제 요청
+            axiosInstance.delete(`/api/viewsets/todos/${pk}/`)
+            .then(function(response){
+
+                // 삭제 후 목록 페이지로 이동
+                window.location.href = "/todoList/";
+            })
+            .catch(function(error){
+                alert("Todo 삭제에 실패했습니다.");
+            });
+        }
+    }
+
+</script>
+{% endblock %}

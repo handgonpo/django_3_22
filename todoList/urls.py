@@ -5,8 +5,8 @@ from .views import *
 urlpatterns = [
    path('list/', todo_List, name = 'todo_List'), # 127.0.0.1:8000/todoList/list/ 경로변경
    path("create/", TodoCreateView.as_view()),# 127.0.0.1:8000/todoList/create/
+   path("detail/<int:pk>/", TodoDetailView.as_view()), # 127.0.0.1:8000/todoList/detail/<str:name>/ name = 공부를 찾아서 리턴 
    path("<int:pk>/", TodoDetailView.as_view()), # 127.0.0.1:8000/todoList/<int:pk>/
-   path("<str:name>/", todo_detail), # 127.0.0.1:8000/todoList/<str:name>/ name = 공부를 찾아서 리턴 
-]
+ ]  
 
 # urls.py (라우팅) -> views.py(로직) -> ~~.html(템플릿)

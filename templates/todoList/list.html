@@ -1,28 +1,155 @@
 {% extends "base.html" %}
+{% load static %} <!-- 정적 파일(static) 불러오기 위해 필요한 태그 -->
+
 {% block content %}
 
-<ul>
-    {% for todo in todos %}
-        <li>
-            <strong>{{ todo.name }}</strong><br>
-            설명: {{ todo.description }}<br>
+<div class="todo600">
+    <!-- todo 리스트가 들어갈 그릇 -->
+    <div class="todocontainer"></div>
+    <!-- Todo 등록하기 버튼 -->
+    <button class="todoCreate todoCreate_list" onclick="window.location.href='/todoList/create/'">Todo 등록하기</button>
+</div>
 
-            완료 여부: 
-            {% if todo.complete %}
-                <span>✔️완료</span>
-            {% else %} 
-                ❌ 미완료
-            {% endif %}<br>
-            
-            가산점: {{ todo.exp }}점<br>
-            완료 시간: {{ todo.completed_at|default:"-" }}<br>
-            생성 시간: {{ todo.created_at }}<br>
-            수정 시간: {{ todo.updated_at }}<br>
-            <hr>
-        </li>
-    {% empty %}
-        <li>할 일이 없습니다!</li>
-    {% endfor %}
-</ul>
+</div>
 
+<!-- 페이지 번호(1, 2, 3...)가 들어갈 공간 -->
+<div class="pagination"></div>
+
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    // 날짜 포맷 변환 함수
+    // 백엔드에서 오는 ISO 형식 날짜 문자열을 사람이 읽기 쉬운 형식(예: 2025.03.29 13:00)으로 바꿔줌
+    function datetimeToString(datetimeStr) {
+        if (!datetimeStr) return "-"; // 값이 없으면 하이픈 표시
+        const date = new Date(datetimeStr);
+        return date.toLocaleString("ko-KR", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    }
+    
+    // 비동기 리스트 불러오기 함수
+    // 인자로 페이지 번호를 받아서 해당 페이지의 todo 목록을 가져옴
+    function loadTodoList(page) {
+        $(".todocontainer").empty(); // 기존 목록 비우기
+
+        // Axios로 API 호출 (해당 페이지의 todo들 요청)
+        axiosInstance.get(`/api/viewsets/todos/?page=${page}`) //127.0.0.1:8000/api/viewsets/todos/?page=2/
+        //?page=2 같은 구조는 "목록이 많을 거라고 예상하고, 미리 나눠서 가져오도록 설계된 API"
+
+            //비동기 처리때 사용하는 방식으로 요청이 성공했을때,
+            .then(function (response) {
+                const todos = response.data.results; // 서버로부터 받은 todo 목록
+
+                // 각각의 todo를 화면에 표시
+                // for문은 리스트나 배열처럼 여러 개의 데이터를 순회(iterate)하면서 처리하기 위해 사용됨
+                // 그래서 흔히 "모든 데이터를 한 번씩 처리(불러오기)" 할 때 사용.
+                for (var i = 0; i < todos.length; i++) { 
+                    var todo = todos[i];
+                    var todoElement = `` // 리스트 하나당 HTML 구성
+
+                    /*
+                    ✅ 이 for문의 핵심 역할은?
+                    👉 모든 todo 데이터를 순회하면서
+                    각 항목이 완료 상태인지 아닌지(조건)에 따라
+                    다르게 HTML을 구성(rendering)하는 구조입니다.
+                    */
+
+                    // 완료된 todo라면
+                    if (todo.complete === true) { //조건 목록데이터의 체크박스에 체크의 정보가 true일경우
+                        todoElement = `          
+                    <div class="todo-item" onclick="detailView(${todo.id})">
+                        <p><strong>Name:</strong>${todo.name}</p>
+                        <p><strong>Description:</strong> ${todo.description}</p>
+                        <p class="complete_underline"><strong>Complete:</strong> ${todo.complete ? "완료" : "진행중"}</p>
+                        <p><strong>Completed At:</strong> ${datetimeToString(todo.completed_at)}</p>
+                        <p><strong>Experience Points:</strong> ${todo.exp}</p>
+                    </div>
+                    `
+                    } else { // 아직 완료되지 않은 todo라면, 완료 버튼도 추가
+                        todoElement = `
+                    <div class="todo-item" onclick="detailView(${todo.id})">
+                        <p><strong>Name:</strong>${todo.name}</p>
+                        <p><strong>Description:</strong> ${todo.description}</p>
+                        <p><strong>Complete:</strong> ${todo.complete ? "완료" : "진행중"}</p>
+                        <p><strong>Completed At:</strong> ${datetimeToString(todo.completed_at)}</p>
+                        <p><strong>Experience Points:</strong> ${todo.exp}</p>
+                        <button class="todoUpdate" onclick="toComplete(${todo.id})">완료</button>
+                    </div>
+                    `
+                    }
+
+                    // 만들어진 HTML을 .todocontainer div 안에 추가
+                    $(".todocontainer").append(todoElement)
+                }
+
+
+                // 페이지네이션 처리 시작
+                var pagination = response.data;
+                var pageLinks = "";
+
+                const totalCount = pagination.count; // 전체 todo 개수
+                const totalPages = Math.ceil(totalCount / 5); // 한 페이지에 5개씩 보여줄 때 총 페이지 수 계산
+
+                if (totalPages > 1) {
+                    var maxDisplayedPages = 5; // 최대 표시할 페이지 번호 수
+                    var currentPage = page;
+
+                    var startPage = Math.max(1, currentPage - 5);
+                    var endPage = Math.min(totalPages, currentPage + 5);
+
+                    // 페이지 링크 계산 보정
+                    if (currentPage - startPage < 5) {
+                        endPage = Math.min(endPage + (5 - (currentPage - startPage)), totalPages);
+                    }
+                    if (endPage - currentPage < 5) {
+                        startPage = Math.max(startPage - (5 - (endPage - currentPage)), 1);
+                    }
+
+                    // 페이지 번호 링크를 하나씩 생성해서 pageLinks 문자열에 추가
+                    for (var i = startPage; i <= endPage; i++) {
+                        pageLinks += `<a class="listNum" href="#" onclick="loadTodoList(${i})">${i}</a> `;
+                    }
+
+                    // 페이지 번호 링크들을 .pagination div에 삽입
+                    $(".pagination").html(pageLinks);
+                }
+
+            })
+
+            //요청이 실패했을때(에러발생)
+            .catch(function (error) {
+                console.log(error) // 에러 발생 시 콘솔에 출력
+            })
+
+    }
+
+    // 상세 페이지 이동 함수
+    // 리스트 아이템 클릭 시 호출됨 → 해당 Todo의 상세 페이지로 이동
+    function detailView(pk) {
+        window.location.href = `/todoList/detail/${pk}/`; //127.0.0.1:8000/todoList/detail/id/
+    }
+    
+    // 완료 버튼 클릭 시 호출됨 → 완료 처리 요청
+    function toComplete(pk) {
+        axiosInstance.patch(`/api/viewsets/todos/${pk}/`,
+            {
+                complete: true,
+            })
+            .then(function (response) {
+                window.location.reload()
+            })
+    }
+    
+    //페이지 로딩 시 실행되는 부분
+    $(document).ready(function () {
+        loadTodoList(1);
+    });    
+
+</script>
 {% endblock %}
