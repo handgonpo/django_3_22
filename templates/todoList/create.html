@@ -83,8 +83,19 @@
     
             // CKEditor에서 입력한 description 내용 가져오기
             let description = CKEDITOR.instances['description'].getData();
+            let name = $("#name").val();
+
+            // ✅ 입력값 검증 추가
+            if (name.trim() === "") {
+                alert("이름을 입력해주세요.");
+                return;
+            }
+            if (description.trim() === "") {
+                alert("내용을 입력해주세요.");
+                return;
+            }    
     
-            // Axios로 POST 요청 보내기
+            // 유효성 검사 통과 시, 서버에 POST 요청 Axios로 POST 요청 보내기 
             axiosInstance.post("/api/viewsets/todos/", { //insomnia 경로
                 name: $("#name").val(),
                 description: description,

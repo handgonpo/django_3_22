@@ -7,7 +7,13 @@
     <!-- todo 리스트가 들어갈 그릇 -->
     <div class="todocontainer"></div>
     <!-- Todo 등록하기 버튼 -->
+    <!-- <button class="todoCreate todoCreate_list" onclick="window.location.href='/todoList/create/'">Todo 등록하기</button> -->
+    <!--접근 제어(로그인 안 된 사용자는 이동 불가)-->
+    {% if user.is_authenticated %}
     <button class="todoCreate todoCreate_list" onclick="window.location.href='/todoList/create/'">Todo 등록하기</button>
+    {% else %}
+    <button class="todoCreate todoCreate_list" onclick="alert('로그인이 필요합니다.'); window.location.href='/users/login/'">로그인 후 등록</button>
+    {% endif %}
 </div>
 
 </div>
@@ -32,6 +38,9 @@
             minute: "2-digit"
         });
     }
+
+    //로딩중
+    $(".todocontainer").html("<p>로딩 중...</p>");
     
     // 비동기 리스트 불러오기 함수
     // 인자로 페이지 번호를 받아서 해당 페이지의 todo 목록을 가져옴

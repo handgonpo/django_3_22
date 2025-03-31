@@ -68,6 +68,25 @@
         // ✅ CKEditor에서 입력된 설명 내용을 가져옴
         let description = CKEDITOR.instances['description'].getData();
 
+        let name = $("#name").val();
+        let exp = $("#exp").val();  
+        
+        // ✅ 입력값 유효성 검사
+        if (name.trim() === "") {
+            alert("이름을 입력해주세요.");
+            return;
+        }
+
+        if (description.trim() === "") {
+            alert("내용을 입력해주세요.");
+            return;
+        }
+
+        if (exp === "") {
+            exp = 0;
+        }    
+
+
         // ✅ 백엔드 API에 수정 요청(PATCH) 보내기
         axiosInstance.patch(`/api/viewsets/todos/${pk}/`, {
             name: $("#name").val(),                          // 이름

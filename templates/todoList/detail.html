@@ -10,10 +10,12 @@
     <div class="todoInfo"></div> <!-- ✅ 이곳에 상세 데이터가 동적으로 들어올 예정 -->
     
     <!-- ✏️ 수정 / 🗑 삭제 버튼 -->
+    {% if user.is_authenticated %} 
     <div class="btnList">
         <button class="todoUpdate todoCreate" onclick="toUpdate()">수정</button>
         <button class="todoDelete todoCreate" onclick="toDelete()">삭제</button>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
 

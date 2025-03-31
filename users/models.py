@@ -35,9 +35,9 @@ class User(AbstractUser):
 
     username = models.CharField(max_length=150, unique=True)
 
-    first_name = None
-    last_name = None
-    email = None
+    # first_name = None
+    # last_name = None
+    # email = None
 
     USERNAME_FIELD = "username"
     REQUIRED_FIELDS = []
