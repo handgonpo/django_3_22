@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %} <!-- 정적 파일(static)을 HTML에서 사용할 수 있게 해주는 태그 -->
+
+{% block content %}
+  <form id="loginForm">
+    <div class="form-container">
+        <h2>Login</h2>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        
+        <div class="form-actions">
+            <button class="button-primary" type="button" onclick="submitForm()">Login</button>
+            <button class="button-primary" type="button" onclick="window.location.href='/signup/'">Signup</button><!--여기확인-->
+        </div>
+    </div>
+  </form>
+{% endblock %}
+
+
+{% block extra_script %}  
+<script>
+
+function submitForm() {
+  var username = document.getElementById('username').value;
+  var password = document.getElementById('password').value;
+
+  var data = {
+    username: username,
+    password: password
+  };
+
+  axiosInstance.post('/users/api/login/', data, {
+    withCredentials: true  // ✅ 세션 쿠키 포함해서 로그인 처리
+    })
+    .then(function (response) {
+      // 서버 응답 성공 시 처리
+      console.log('Login successful:', response.data);
+      window.location.href = '/todoList/list/';
+      // 여기에서 로그인 성공 시의 추가 작업을 수행할 수 있습니다.
+    })
+    .catch(function (error) {
+      // 서버 응답 실패 시 처리
+      console.error('Login failed:', error);
+        alert('Login failed. Please try again.');
+      // 여기에서 로그인 실패 시의 추가 작업을 수행할 수 있습니다.
+    });
+}
+
+</script>
+
+{% endblock%}

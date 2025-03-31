@@ -28,6 +28,7 @@ ALLOWED_HOSTS = []
 
 CUSTOM_APPS = [
     'todoList',
+    'users',
 ]
 
 THIRD_PARTY_APPS = [
@@ -38,6 +39,7 @@ THIRD_PARTY_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 INSTALLED_APPS = CUSTOM_APPS + THIRD_PARTY_APPS
@@ -132,6 +134,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # API 요청에 대한 접근 권한(permissions) 을 어떻게 처리할지를 지정
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # ✅ 세션 기반
+    ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5,
 }
+
+AUTH_USER_MODEL = 'users.User'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]

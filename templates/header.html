@@ -1,3 +1,44 @@
 {% load static %}
-<h1 class="mainCenter"><span class="material-symbols-outlined icon_size">note_alt</span><a href="{% url 'todo_Main' %}">나의 Todo List</a></h1>
-<p><a href = "{% url 'todo_List' %}">Todo List페이지로 이동</a></p>
+<div class="header">
+    <div class="header-left">
+        <h1>
+            <span class="material-symbols-outlined icon_size">note_alt</span>
+            <a class="white" href="{% url 'base' %}">나의 Todo List</a>
+        </h1>
+    </div>
+    <div class="header-right">
+        {% if user.is_authenticated %}
+            <a href="javascript:void(0)" onclick="logoutUser()">LogOut</a>  {# GET 요청 방지! #}
+        {% else %}
+            <a href="{% url 'login_page' %}">Login</a>
+            <a href="{% url 'signup_page' %}">Signup</a>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// 로그아웃 처리 함수
+function logoutUser() {
+  fetch("{% url 'logout_api' %}", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": getCSRFToken()
+    },
+    credentials: "include"  // 세션 쿠키 포함!
+  })
+  .then(data => {
+    window.location.href = "{% url 'login_page' %}";
+  })
+  .catch(error => {
+    alert("Logout failed: " + error.message);
+  });
+}
+
+// CSRF 토큰을 쿠키에서 가져오는 함수
+function getCSRFToken() {
+  const cookie = document.cookie.split(';').find(c => c.trim().startsWith('csrftoken='));
+  return cookie ? cookie.split('=')[1] : '';
+}
+</script>
+
