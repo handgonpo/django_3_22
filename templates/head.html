@@ -38,7 +38,7 @@
 
         // axios 인스턴스 생성
         const axiosInstance = axios.create({
-            baseURL: "http://127.0.0.1:8000",
+            baseURL: window.location.origin,
             headers: {
                 "Content-Type": "application/json",
                 'X-CSRFToken': getCookie('csrftoken'), // CSRF 토큰 필요!

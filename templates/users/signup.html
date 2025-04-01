@@ -26,16 +26,18 @@
 
 {% block extra_script %}
 <script>
+  const signupUrl = "{% url 'signup' %}";
   function submitForm() {
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-  const password2 = document.getElementById("password2").value;
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const password2 = document.getElementById("password2").value;
 
-  if (password !== password2) {
-    alert("비밀번호가 일치하지 않습니다.");
-    return;
-  }
+    if (password !== password2) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
 
+  
   axiosInstance.post("/users/api/signup/", {
       username: username,
       password: password
