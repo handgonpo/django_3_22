@@ -18,13 +18,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
+# ✅ [base.py → local.py / deploy.py 로 이동됨]
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ya-jzo#v4gtbfj*tjuyk_iyzu9_$6i9v3@gbl4v4ow1d=6i2y='
+# SECRET_KEY = 'django-insecure-ya-jzo#v4gtbfj*tjuyk_iyzu9_$6i9v3@gbl4v4ow1d=6i2y='
 
+# ✅ [base.py → local.py / deploy.py 로 이동됨]
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+# ✅ [base.py → local.py / deploy.py 로 이동됨]
+# ALLOWED_HOSTS = []
 
 CUSTOM_APPS = [
     'todoList',
@@ -40,6 +43,8 @@ THIRD_PARTY_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    # ✅ [추가됨] ckeditor는 base.py로 이동
+    # 'ckeditor',
 ]
 
 INSTALLED_APPS = CUSTOM_APPS + THIRD_PARTY_APPS
@@ -76,8 +81,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+# ✅ [sqlite 설정은 base.py에 있음, local/deploy에서 override]
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -87,8 +91,6 @@ DATABASES = {
 
 
 # Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -106,43 +108,49 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
+LANGUAGE_CODE = 'ko-kr'  # ✅ base.py에 있음
 
-LANGUAGE_CODE = 'ko-kr'
-
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'UTC'  # ❗ base.py에서는 'Asia/Seoul'로 변경됨
 
 USE_I18N = True
 
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
+# Static files
 STATIC_URL = 'static/'
-
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# API 요청에 대한 접근 권한(permissions) 을 어떻게 처리할지를 지정
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',  # ✅ 세션 기반
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 5,
-}
 
+# deploy, local에 재정의됨
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.SessionAuthentication',  # ✅ 세션 기반
+#     ],
+#     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+#     'PAGE_SIZE': 5,
+# }
+
+# ✅ base.py에 있음
 AUTH_USER_MODEL = 'users.User'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
+
+# ✅ 로그인 관련 설정들도 base.py로 이동됨
+# LOGIN_URL = "/auth/login/"
+# LOGIN_REDIRECT_URL = "/todoList/list/"
+# LOGOUT_REDIRECT_URL = "/auth/login/"
+
+# ✅ 미디어 관련 설정도 base.py로 이동됨
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# ✅ CKEditor 업로드 경로도 base.py로 이동됨
+# CKEDITOR_UPLOAD_PATH = 'uploads/ckeditor/'
