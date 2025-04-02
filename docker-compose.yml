@@ -1,18 +1,16 @@
 version: "3.7"
+
 services:
   nginx:
-    image: nginx:1.19.5 # https://hub.docker.com/_/nginx 
+    image: nginx:1.19.5
     ports:
       - 80:80
       - 443:443
     networks:
       - network
     volumes:
-      - /home/django_3_22/nginx.conf:/etc/nginx/nginx.conf #서버경로
-      # - /etc/letsencrypt/live/updaun.store/fullchain.pem:/etc/letsencrypt/live/updaun.store/fullchain.pem
-      # - /etc/letsencrypt/live/updaun.store/privkey.pem:/etc/letsencrypt/live/updaun.store/privkey.pem # 도메인이 생기면 인증서 발급후 수정
-      - static_volume:/data/static 
-      
+      - /home/django_3_22/nginx.conf:/etc/nginx/nginx.conf # ← 실제 파일이 있는지 확인 필수!
+      - static_volume:/data/static
     depends_on:
       - django_container
 
@@ -22,11 +20,11 @@ services:
       - network
     volumes:
       - static_volume:/home/django_3_22/staticfiles
-    secrets:
-      - DJANGO_SECRET_KEY
-      - POSTGRES_DB
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
+    environment:
+      - DJANGO_SECRET_KEY=super-secret-key
+      - POSTGRES_DB=django_db
+      - POSTGRES_USER=django_user
+      - POSTGRES_PASSWORD=yourpassword123
 
   postgresdb:
     image: postgres:13.11
@@ -36,30 +34,14 @@ services:
       - 5432:5432
     volumes:
       - postgres_database:/var/lib/postgresql/data
-    secrets:
-      - POSTGRES_DB
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
     environment:
-      - POSTGRES_DB_FILE=/run/secrets/POSTGRES_DB
-      - POSTGRES_USER_FILE=/run/secrets/POSTGRES_USER
-      - POSTGRES_PASSWORD_FILE=/run/secrets/POSTGRES_PASSWORD
-
+      - POSTGRES_DB=django_db
+      - POSTGRES_USER=django_user
+      - POSTGRES_PASSWORD=yourpassword123
 
 networks:
   network:
-  
 
 volumes:
   postgres_database:
   static_volume:
-
-secrets:
-  DJANGO_SECRET_KEY:
-    external: true
-  POSTGRES_DB:
-    external: true
-  POSTGRES_USER:
-    external: true
-  POSTGRES_PASSWORD:
-    external: true
