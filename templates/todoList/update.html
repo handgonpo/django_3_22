@@ -1,6 +1,7 @@
 {% extends "base.html" %}  <!-- base.html 템플릿을 확장 (공통 레이아웃 사용) -->
 
 {% load static %}  <!-- 정적(static) 파일을 사용하기 위해 static 템플릿 태그 불러옴 -->
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
 
 {% block content %}
 <div class="container todo600">

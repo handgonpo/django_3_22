@@ -19,7 +19,7 @@ def read_secret(secret_name):
 
 # 보안 SECURITY WARNING: keep the secret key used in production secret! 
 SECRET_KEY = read_secret('DJANGO_SECRET_KEY')
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['yourdomain.com'] # 도메인 생기면 변경
 
 # 추가보안설정

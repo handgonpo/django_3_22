@@ -34,6 +34,6 @@ REST_FRAMEWORK = {
 }
 
 # 디버그 툴바 설정 (로컬 개발용 디버깅 도구)
-INSTALLED_APPS += ['debug_toolbar'] # 앱 추가
-MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware') # 미들웨어 가장 위에 추가
+# INSTALLED_APPS += ['debug_toolbar'] # 앱 추가
+# MIDDLEWARE.insert(0, 'debug_toolbar.middleware.DebugToolbarMiddleware') # 미들웨어 가장 위에 추가
 INTERNAL_IPS = ['127.0.0.1'] # 디버그툴바 사용 허용 IP (로컬)

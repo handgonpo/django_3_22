@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from todoList import views
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls), # 127.0.0.1:8000/admin/
@@ -11,15 +12,18 @@ urlpatterns = [
     path('api/', include('todoList.api_urls')), # 127.0.0.1:8000/api/ 
     # -> DRF 기반으로 todoList>api_urls.py에 정의된 모든 URL 앞에 접두어 처럼 api/를 붙여서 최종 URL을 만든다는 뜻
     path("api/viewsets/", include("todoList.api_viewset_urls")), # 127.0.0.1:8000/api/viewsets/<int:pk>/
-]
+] 
 
-# 디버그 툴바 URL 라우팅 추가
-if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns += [
-        path('__debug__/', include(debug_toolbar.urls)),
-    ] 
-
+# if settings.DEBUG:
+#     import debug_toolbar
+#     urlpatterns += [
+#         path('__debug__/', include(debug_toolbar.urls)),
+#     ]
+#     # 개발환경용: static 폴더에서 직접 제공
+#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0])
+# else:
+#     # 배포환경용: collectstatic 결과물 사용
+#     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 '''
 1. 127.0.0.1:8000/admin/

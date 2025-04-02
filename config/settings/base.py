@@ -110,11 +110,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images) 정적 파일
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / "static"]
-
 # 미디어 파일
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -138,4 +133,8 @@ LOGIN_URL = "/auth/login/"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-
+# Static files (CSS, JavaScript, Images) 정적 파일
+# https://docs.djangoproject.com/en/5.1/howto/static-files/
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"
