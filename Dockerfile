@@ -23,4 +23,5 @@ RUN pip install --upgrade pip \
 EXPOSE 8000
 
 # gunicorn 명령 실행 (배포 설정 사용)
-CMD ["gunicorn", "config.wsgi", "--env", "DJANGO_SETTINGS_MODULE=config.settings.deploy", "--bind", "0.0.0.0:8000", "--timeout", "60"]
+ENV DJANGO_SETTINGS_MODULE=config.settings.deploy
+CMD ["gunicorn", "config.wsgi", "--bind", "0.0.0.0:8000", "--timeout", "60"]
