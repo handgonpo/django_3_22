@@ -11,14 +11,11 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
+# SQLite3 설정
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': 'postgresdb',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.environ.get('DATABASE_NAME', os.path.join(BASE_DIR, 'db.sqlite3')),
     }
 }
 
@@ -30,4 +27,4 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 5,
 }
 
-STATIC_ROOT = "/home/django_3_22/staticfiles"
+STATIC_ROOT = "/home/app/django_3_22/staticfiles"
