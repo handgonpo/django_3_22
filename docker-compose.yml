@@ -8,9 +8,6 @@ services:
       - 443:443
     networks:
       - network
-    configs:
-      - source: nginx_conf
-        target: /etc/nginx/nginx.conf
     depends_on:
       - django_container
     deploy:
@@ -20,8 +17,6 @@ services:
       - static_volume:/home/app/django_3_22/staticfiles    
 
   django_container:
-    build:
-      context: .
     image: django_course:v1.0.0
     networks:
       - network
@@ -40,6 +35,3 @@ volumes:
   static_volume:
   sqlite_volume:
 
-configs:
-  nginx_conf:
-    external: true  
