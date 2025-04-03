@@ -1,8 +1,19 @@
 version: "3.7"
 
 services:
+  django_container:
+    build:
+      context: .
+    image: django_3_22:v1.0.0
+    container_name: django_container
+    ports:
+      - "8000:8000"
+    networks:
+      - network
+
   nginx:
     image: nginx:1.19.5
+    container_name: nginx
     ports:
       - 80:80
       - 443:443
@@ -14,10 +25,11 @@ services:
       restart_policy:
         condition: on-failure
     volumes:
-      - static_volume:/home/app/django_3_22/staticfiles    
+      # - static_volume:/home/app/django_3_22/staticfiles  
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf  
 
   django_container:
-    image: django_course:v1.0.0
+    image: django_3_22:v1.0.0
     networks:
       - network
     volumes:
