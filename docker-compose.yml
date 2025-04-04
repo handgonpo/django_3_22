@@ -1,44 +1,30 @@
 version: "3.7"
 
 services:
-  django_container:
-    build:
-      context: .
-    image: django_3_22:v1.0.0
-    container_name: django_container
-    ports:
-      - "8000:8000"
-    networks:
-      - network
-
   nginx:
     image: nginx:1.19.5
-    container_name: nginx
     ports:
-      - 80:80
-      - 443:443
+      - "80:80"
+      - "443:443"
     networks:
       - network
+    volumes:
+      - /home/django_3_22/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - static_volume:/data/static
     depends_on:
       - django_container
-    deploy:
-      restart_policy:
-        condition: on-failure
-    volumes:
-      # - static_volume:/home/app/django_3_22/staticfiles  
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf  
 
   django_container:
     image: django_3_22:v1.0.0
     networks:
       - network
     volumes:
-      - static_volume:/home/app/django_3_22/staticfiles
-      - sqlite_volume:/home/app/django_3_22/db 
+      - static_volume:/home/django_3_22/staticfiles
+      - sqlite_volume:/home/django_3_22/db
     environment:
       - DJANGO_SECRET_KEY=super-secret-key
-      - DATABASE_NAME=/home/app/django_3_22/db/db.sqlite3
-      - DATABASE_PATH=/home/app/django_3_22/db
+      - DATABASE_NAME=/home/django_3_22/db/db.sqlite3
+      - DATABASE_PATH=/home/django_3_22/db
 
 networks:
   network:
@@ -46,4 +32,3 @@ networks:
 volumes:
   static_volume:
   sqlite_volume:
-

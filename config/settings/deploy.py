@@ -27,4 +27,4 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 5,
 }
 
-STATIC_ROOT = "/home/app/django_3_22/staticfiles"
+STATIC_ROOT = "/home/django_3_22/staticfiles"
